@@ -1,0 +1,73 @@
+elementsperlevel[0]:9
+elementsperlevel[1]:5
+elementsperlevel[2]:3
+elementsperlevel[3]:2
+Creating thread 0 in level0.
+SPAWN:T1=0	T2=0		thislevelqueue_cnt:2	nextlevelqueue_cnt:0
+Creating thread 1 in level0.
+SPAWN:T1=1	T2=0		thislevelqueue_cnt:4	nextlevelqueue_cnt:0
+
+MERGE:T1=2	T2=0		thislevelqueue_cnt:4	nextlevelqueue_cnt:0
+Joining thread 0 in level0.
+MERGE:T1=2	T2=0		thislevelqueue_cnt:4	nextlevelqueue_cnt:1
+MERGE:T1=2	T2=1		thislevelqueue_cnt:4	nextlevelqueue_cnt:1
+Joining thread 1 in level0.
+MERGE:T1=2	T2=1		thislevelqueue_cnt:4	nextlevelqueue_cnt:2
+
+######
+
+Creating thread 0 in level0.
+SPAWN:T1=0	T2=2		thislevelqueue_cnt:6	nextlevelqueue_cnt:2
+Creating thread 1 in level0.
+SPAWN:T1=1	T2=2		thislevelqueue_cnt:8	nextlevelqueue_cnt:2
+
+MERGE:T1=2	T2=0		thislevelqueue_cnt:8	nextlevelqueue_cnt:2
+Joining thread 0 in level0.
+MERGE:T1=2	T2=0		thislevelqueue_cnt:8	nextlevelqueue_cnt:3
+MERGE:T1=2	T2=1		thislevelqueue_cnt:8	nextlevelqueue_cnt:3
+Joining thread 1 in level0.
+MERGE:T1=2	T2=1		thislevelqueue_cnt:8	nextlevelqueue_cnt:4
+
+REMAINDER:T1=2	T2=2		thislevelqueue_cnt:9	nextlevelqueue_cnt:5
+
+######
+
+Resetting variables
+Creating thread 0 in level1.
+SPAWN:T1=0	T2=2		thislevelqueue_cnt:2	nextlevelqueue_cnt:0
+Creating thread 1 in level1.
+SPAWN:T1=1	T2=2		thislevelqueue_cnt:4	nextlevelqueue_cnt:0
+
+MERGE:T1=2	T2=0		thislevelqueue_cnt:4	nextlevelqueue_cnt:0
+Joining thread 0 in level1.
+MERGE:T1=2	T2=0		thislevelqueue_cnt:4	nextlevelqueue_cnt:1
+MERGE:T1=2	T2=1		thislevelqueue_cnt:4	nextlevelqueue_cnt:1
+Joining thread 1 in level1.
+MERGE:T1=2	T2=1		thislevelqueue_cnt:4	nextlevelqueue_cnt:2
+
+REMAINDER:T1=2	T2=2		thislevelqueue_cnt:5	nextlevelqueue_cnt:3
+
+######
+
+Resetting variables
+Creating thread 0 in level2.
+SPAWN:T1=0	T2=2		thislevelqueue_cnt:2	nextlevelqueue_cnt:0
+
+BREAK:T1=0	T2=2		thislevelqueue_cnt:2	nextlevelqueue_cnt:0
+
+
+REMAINDER:T1=0	T2=0		thislevelqueue_cnt:3	nextlevelqueue_cnt:1
+
+######
+
+Resetting variables
+Creating thread 0 in level3.
+SPAWN:T1=0	T2=0		thislevelqueue_cnt:2	nextlevelqueue_cnt:0
+
+BREAK:T1=0	T2=0		thislevelqueue_cnt:2	nextlevelqueue_cnt:0
+
+
+######
+
+Resetting variables
+Main: program completed. Exiting.

@@ -1,9 +1,9 @@
 all: compile run
 
 compile: ass1-pthreads.c
-	gcc $^ -pthread -o $@
+	gcc $^ -pthread -lm -o $@
 
-run: compiled
+run: compile
 	./$^
 
 clean:
