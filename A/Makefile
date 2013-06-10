@@ -1,10 +1,14 @@
 all: compile run
 
 compile: ass1-pthreads.c
-	gcc $^ -pthread -lm -o $@
+
+	gcc $^ -ggdb3 -pthread -lm -Wall -o $@
 
 run: compile
 	./$^
+
+dbug: compile
+	gdb ./$^
 
 clean:
 	trash-put -v compile
