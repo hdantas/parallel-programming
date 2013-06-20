@@ -70,9 +70,13 @@ int main (int argc, char *argv[]) {
 	return 0;
 }
 
-int seqmerge (int i, int j){
+int* seqmerge (int i, int j){
+	
+	
+	int C
 	for (i = 0; i <= sizeA/a; i++) {
 		for (j = 0; j <= sizeB/b; j++) {
+		
 		}
 	}	
 }
