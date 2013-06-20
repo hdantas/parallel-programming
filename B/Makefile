@@ -2,13 +2,13 @@ all: compile run
 
 compile: ass2-pthreads.c
 
-	gcc $^ -ggdb3 -pthread -lm -Wall -o $@
+	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
 
 run: compile
-	./$^
+	./$^.out
 
 dbug: compile
-	gdb ./$^
+	gdb ./$^.out
 
 clean:
-	trash-put -v compile
+	trash-put -v compile.out
