@@ -1,5 +1,7 @@
 PTHREADS
-	everything
+	read and write to/from file
+	select NTHREADS and file from terminal
+	measure things (check lab manual)
 
 OPENMP
 	everything
