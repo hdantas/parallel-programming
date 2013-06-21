@@ -9,7 +9,6 @@
 #define NELEMS(x)  (sizeof(x) / sizeof(x[0])) // number of elements in an array
 
 
-typedef enum { false, true } bool; //fake booleans for C
 /********************************************************************
 Algorithm:
 
