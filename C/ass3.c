@@ -7,8 +7,8 @@
 void pointerJumping (int* array, int length);
 
 int main (int argc, char *argv[]) {
-	int array[] = {0,14,13,5,16,11,10,9,12,0,8,7,15,4,3,2,1};
-	// int array[] = {1,1,1,2,1,3,3,4,5,5,6,7,8,9,9,10,11};
+	//int array[] = {0,14,13,5,16,11,10,9,12,0,8,7,15,4,3,2,1};
+	int array[] = {0,0,1,2,1,3,3,4,5,5,6,7,8,9,9,10,11};
 	int length = NELEMS(array)-1;
 
 	printf("Pointer Jumping result:\n\n");

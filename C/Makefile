@@ -1,4 +1,4 @@
-all: runserial
+all: run
 
 serial: ass3.c
 	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out

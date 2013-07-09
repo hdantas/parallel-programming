@@ -1,143 +1,136 @@
-#include <stdio.h>
-#include <string.h>
-#include <pthread.h>
-#include <stdlib.h>
 #include <math.h>
-#include <sys/time.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-// Number of threads
-#define NUM_THREADS 32
+#define NUM_THREADS 10
+#define NELEMS(x)  (sizeof(x) / sizeof(x[0])) // number of elements in an array
+#define NSIZE 16
 
-// Number of iterations
-#define TIMES 1000
+void *pardo_init(length,S,P,D);
+void *pardo_compute(length,S,newS,D,newD);
+void *pardo_update(length,S,newS,D,newD);
+void *pointerJumping (int* array, int length);
+void handlerc(int rc,char* string, long t);
+void join_threads(pthread_attr_t attr,pthread_t* threads,int t);
 
-// Input Size
-#define NSIZE 7
-#define NMAX 262144
-int Ns[NSIZE] = {4096, 8192, 16384, 32768, 65536, 131072, 262144};   
+typedef struct thread_data1{
+	int length;
+	int value;
+	int* S;
+	int* P;
+	int* D;
+} thread_data1;
 
-typedef struct __ThreadArg {
-  int id;
-  int nrT;
-  int n;
-} tThreadArg;
+typedef struct thread_data2 {
+	int length;
+	int* S;
+	int* newS;
+	int* D;
+	int* newD;
+} thread_data2;
+
+struct thread_data1 thread_data1_array[NUM_THREADS];
+struct thread_data2 thread_data2_array[NUM_THREADS];
+
+int main (int argc, char *argv[]) {
+	//int array[] = {0,14,13,5,16,11,10,9,12,0,8,7,15,4,3,2,1};
+	int array[] = {0,0,1,2,1,3,3,4,5,5,6,7,8,9,9,10,11};
+	int length = NELEMS(array)-1;
+
+	printf("Pointer Jumping result:\n\n");
+
+	pthread_t threads[NUM_THREADS];
+	pthread_attr_t attr;
+	int rc;
+	int t = 0;
+
+	/* Initialize and set thread joinable attribute */
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
 
-pthread_t callThd[NUM_THREADS];
-pthread_mutex_t mutexpm;
-pthread_barrier_t barr, internal_barr;
-
-// Seed Input
-int A[NMAX];
-
-// Subset
-int B[NMAX];
-
-void init(int n){
-	/* Initialize the input for this iteration*/
-	// B <- A
-	return;
+	pointerJumping(array,length);
+	return 0;
 }
 
-void seq_function(int m){
-	/* The code for sequential algorithm */
-	// Perform operations on B
-	return;
-}
 
-void* par_function(void* a){
-	/* The code for threaded computation */
-	// Perform operations on B
-	return NULL;
-}
-
-int main (int argc, char *argv[])
-{
-  	struct timeval startt, endt, result;
-	int j, k, nt, t, n, c;
-	void *status;
-   	pthread_attr_t attr;
-  	tThreadArg x[NUM_THREADS];
+void pointerJumping (int* P, int length) {
+	// Using S and P to follow nomenclature of lecture slides
+	int S[NSIZE] = {0};
+	int D[NSIZE] = {0};
+	int newS[NSIZE] = {0};
+	int newD[NSIZE] = {0};
+	int i,j;
 	
-  	result.tv_sec = 0;
-  	result.tv_usec= 0;
+	pardo_init(length,S,P,D);
 
-	/* Generate a seed input */
-	srand ( time(NULL) );
-	for(k=0; k<NMAX; k++){
-		A[k] = rand();
-	}
 
-   	/* Initialize and set thread detached attribute */
-   	pthread_attr_init(&attr);
-   	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-	printf("|NSize|Iterations|Seq|Th01|Th02|Th04|Th08|Par16|\n");
+	for (j=0; j<=log2(length); j++) {	
+		printf("Iteration %d\n",j+1);
+		
+		pardo_compute(length,S,newS,D,newD);
+		for (i=1; i<=length; i++) {
+			printf("S[%d]=%d,%s",i,S[i],(S[i]>9)?" ":"  ");
 
-	// for each input size
-	for(c=0; c<NSIZE; c++){
-		n=Ns[c];
-		printf("| %d | %d q|",n,TIMES);
 
-		// Run sequential algorithm
-		result.tv_usec=0;
-		gettimeofday (&startt, NULL);
-		for (t=0; t<TIMES; t++) {
-			init(n);
-			seq_function(0);
-		}
-		gettimeofday (&endt, NULL);
-		result.tv_usec = (endt.tv_sec*1000000+endt.tv_usec) - (startt.tv_sec*1000000+startt.tv_usec);
-		printf(" %ld.%06ld | ", result.tv_usec/1000000, result.tv_usec%1000000);
-
-		// Run threaded algorithm(s)
-		for(nt=1; nt<NUM_THREADS; nt=nt<<1){
-		       /* if(pthread_barrier_init(&barr, NULL, nt+1))
-    			{
-        			printf("Could not create a barrier\n");
-			        return -1;
+			if (S[i] != S[S[i]]){
+				newD[i] = D[i] + D[S[i]];
+				newS[i] = S[S[i]];
+			} else {
+				newD[i] = D[i];
+				newS[i] = S[i];
 			}
-		        if(pthread_barrier_init(&internal_barr, NULL, nt))
-    			{
-        			printf("Could not create a barrier\n");
-			        return -1;
-			}*/
-
-			result.tv_sec=0; result.tv_usec=0;
-			for (j=1; j<=nt; j++)
-        		{
-				x[j].id = j; 
-				x[j].nrT=nt; // number of threads in this round
-				x[j].n=n;  //input size
-				//pthread_create(&callThd[j-1], &attr, par_function, (void *)&x[j]);
-			}
-
-			gettimeofday (&startt, NULL);
-			for (t=0; t<TIMES; t++) 
-			{
-				init(n);
-				//pthread_barrier_wait(&barr);
-			}
-			gettimeofday (&endt, NULL);
-
-			// Wait on the other threads
-/*			for(j=0; j<nt; j++)
-			{
-				pthread_join(callThd[j], &status);
-			}
-
-			if (pthread_barrier_destroy(&barr)) {
-        			printf("Could not destroy the barrier\n");
-			        return -1;
-			}
-			if (pthread_barrier_destroy(&internal_barr)) {
-        			printf("Could not destroy the barrier\n");
-			        return -1;
-			}*/
-   			result.tv_usec += (endt.tv_sec*1000000+endt.tv_usec) - (startt.tv_sec*1000000+startt.tv_usec);
-			printf(" %ld.%06ld | ", result.tv_usec/1000000, result.tv_usec%1000000);
 		}
 		printf("\n");
+		pardo_update(length,S,newS,D,newD);
+		for (i=1; i<=length; i++) {
+			printf("D[%d]=%d,%s",i,D[i],(D[i]>9)?" ":"  ");
+			S[i] = newS[i];
+			D[i] = newD[i];
+		}
+		printf("\n\n");
 	}
-	pthread_exit(NULL);
+}
+
+
+void *pardo_init(length,S,P,D){
+	for (i=0; i<=length; i++) {
+		S[i] = P[i];
+
+		if (S[i] != 0)
+			D[i] = 1;
+		else
+			D[i] = 0;
+	}
+
+}
+
+void *pardo_compute(length,S,newS,D,newD){
+
+}
+
+void *pardo_update(length,S,newS,D,newD){
+
+}
+
+void handlerc(int rc,char* string, long t){
+	if (rc) {
+	  printf("ERROR; return code from pthread_%s(%ld) is %d\n",string,t,rc);
+	  exit(-1);
+	}
+}
+
+void join_threads(pthread_attr_t attr,pthread_t* threads,int t){
+	int i = 0;
+	int rc = 1;
+
+	printf("Joining %d threads \n",t);
+	for(i=0; i<t; i++) {
+		pthread_attr_destroy(&attr);
+		rc = pthread_join(threads[i],NULL);
+		handlerc(rc,"join",i);
+	}
 }
