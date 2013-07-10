@@ -19,10 +19,10 @@ int main (int argc, char *argv[]) {
 
 void pointerJumping (int* P, int length) {
 	// Using S and P to follow nomenclature of lecture slides
-	int S[NSIZE] = {0};
-	int D[NSIZE] = {0};
-	int newS[NSIZE] = {0};
-	int newD[NSIZE] = {0};
+	int S[NSIZE+1] = {0};
+	int D[NSIZE+1] = {0};
+	int newS[NSIZE+1] = {0};
+	int newD[NSIZE+1] = {0};
 	int i,j;
 	
 	for (i=0; i<=length; i++) {
@@ -38,7 +38,6 @@ void pointerJumping (int* P, int length) {
 		printf("Iteration %d\n",j+1);
 		for (i=1; i<=length; i++) {
 			printf("S[%d]=%d,%s",i,S[i],(S[i]>9)?" ":"  ");
-
 
 			if (S[i] != S[S[i]]){
 				newD[i] = D[i] + D[S[i]];
