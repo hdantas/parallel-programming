@@ -1,5 +1,8 @@
 all: run
 
+template: ass3-pthreads-template.c
+	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
+
 serial: ass3.c
 	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
 
@@ -9,10 +12,10 @@ runserial: serial
 compile: ass3-pthreads.c
 	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
 
-run: compile
+run: template
 	./$^.out
 
-dbug: compile
+dbug: template
 	gdb ./$^.out
 
 clean:
