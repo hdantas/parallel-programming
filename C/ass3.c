@@ -25,7 +25,7 @@ void pointerJumping (int* P, int length) {
 	int newD[NSIZE+1] = {0};
 	int i,j;
 	
-	for (i=0; i<=length; i++) {
+	for (i=1; i<=length; i++) {
 		S[i] = P[i];
 
 		if (0 != S[i])
