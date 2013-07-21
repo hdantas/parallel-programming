@@ -32,7 +32,7 @@ pthread_barrier_t barr, internal_barr;
 
 // Seed Input
 // int A[NMAX];
-int A[NMAX+1] = {0,0,1,2,1,3,3,4,5,5,6,7,8,9,9,10,11};
+int A[] = {0,0,1,2,1,3,3,4,5,5,6,7,8,9,9,10,11};
 
 // Subset
 int B[NMAX];
@@ -43,7 +43,7 @@ int D[NMAX+1] = {0};
 int newS[NMAX+1] = {0};
 int newD[NMAX+1] = {0};
 
-void handlerc(int rc,char* string, int t);
+void printResult(char* string, int n);
 
 void init(int n){
 	/* Initialize the input for this iteration*/
@@ -115,38 +115,37 @@ void* par_function(void* a){
 			D[i] = 0;
 	}
 
-	printf("\tt%d\t1: b4 internal_barr\n",id);
+	// printf("\tt%d\t1: b4 internal_barr\n",id);
 	pthread_barrier_wait(&internal_barr);
 	// printf("\tt%d\t1: after internal_barr\n",id);
 	
-	// for (j=0; j<=log2(n); j++) {
+	for (j=0; j<=log2(n); j++) {
 		// printf("Iteration %d\n",j+1);
-		// for (i=min_i; i<=max_i; i++) {
-		// 	// printf("S[%d]=%d,%s",i,S[i],(S[i]>9)?" ":"  ");
+		for (i=min_i; i<=max_i; i++) {
+			// printf("S[%d]=%d,%s",i,S[i],(S[i]>9)?" ":"  ");
 
-		// 	if (S[i] != S[S[i]]){
-		// 		newD[i] = D[i] + D[S[i]];
-		// 		newS[i] = S[S[i]];
-		// 	} else {
-		// 		newD[i] = D[i];
-		// 		newS[i] = S[i];
-		// 	}
-		// }
+			if (S[i] != S[S[i]]){
+				newD[i] = D[i] + D[S[i]];
+				newS[i] = S[S[i]];
+			} else {
+				newD[i] = D[i];
+				newS[i] = S[i];
+			}
+		}
 		// printf("\n");
-		// pthread_barrier_wait(&internal_barr);
-		// for (i=min_i; i<=max_i; i++) {
-		// 	// printf("D[%d]=%d,%s",i,D[i],(D[i]>9)?" ":"  ");
-		// 	S[i] = newS[i];
-		// 	D[i] = newD[i];
-		// }
+		pthread_barrier_wait(&internal_barr);
+		for (i=min_i; i<=max_i; i++) {
+			// printf("D[%d]=%d,%s",i,D[i],(D[i]>9)?" ":"  ");
+			S[i] = newS[i];
+			D[i] = newD[i];
+		}
 		// printf("\tt%d\t2: b4 internal_barr\n",id);
-		// pthread_barrier_wait(&internal_barr);
+		pthread_barrier_wait(&internal_barr);
 		// printf("\tt%d\t2: after internal_barr\n",id);
-	// }
+	}
 	
-	printf("\tt%d\tb4 barr\n",id);
 	pthread_barrier_wait(&barr);
-	// printf("\tt%d\tafter barr\n",id);
+
 	pthread_exit(NULL);
 
 }
@@ -154,7 +153,7 @@ void* par_function(void* a){
 int main (int argc, char *argv[])
 {
 	struct timeval startt, endt, result;
-	int j, k, nt, t, n, c, rc;
+	int j, nt, t, n, c;
 	void *status;
  	pthread_attr_t attr;
 	tThreadArg x[NUM_THREADS];
@@ -189,6 +188,7 @@ int main (int argc, char *argv[])
 		gettimeofday (&endt, NULL);
 		result.tv_usec = (endt.tv_sec*1000000+endt.tv_usec) - (startt.tv_sec*1000000+startt.tv_usec);
 		printf(" %ld.%06ld | ", result.tv_usec/1000000, result.tv_usec%1000000);
+		// printResult("sequential",n);
 
 		/* Run threaded algorithm(s) */
 		for(nt=1; nt<NUM_THREADS; nt=nt<<1){
@@ -197,44 +197,36 @@ int main (int argc, char *argv[])
 				printf("Could not create a barrier\n");
 				return -1;
 			}
+
 			if(pthread_barrier_init(&internal_barr, NULL, nt))
 			{
 				printf("Could not create a barrier\n");
 				return -1;
 			}
 
-			printf("\nStarted threaded execution with %d threads.\n",nt);
 			result.tv_sec=0; result.tv_usec=0;
 			gettimeofday (&startt, NULL);
-			for (t=0; t<TIMES; t++) 
+			for (t=0; t<TIMES; t++)
 			{			
-				
 				init(n);
-
-				// printf("t = %d.\n",t);
 				for (j=1; j<=/*NUMTHRDS*/nt; j++)
 				{
-					x[j].id = j; 
-					x[j].nrT=nt; // number of threads in this round
-					x[j].n=n; //input size
-					rc = pthread_create(&callThd[j-1], &attr, par_function, (void *)&x[j]);
-					handlerc(rc,"init",j);
+					x[j-1].id = j; 
+					x[j-1].nrT=nt; // number of threads in this round
+					x[j-1].n=n; //input size
+					pthread_create(&callThd[j-1], &attr, par_function, (void *)&x[j-1]);
+				}
+				pthread_barrier_wait(&barr);
+	
+				/* Wait on the other threads */
+				for(j=0; j</*NUMTHRDS*/nt; j++)
+				{
+					pthread_join(callThd[j], &status);
 				}
 
-				printf("before barr\n");
-				pthread_barrier_wait(&barr);
-				// printf("after barr\n");
-				// if(t%100 == 0)
-					// printf("t = %d.\n",t);
 			}
 			gettimeofday (&endt, NULL);
-			// printf("\nFinished threaded execution with %d threads.\n",nt);
-			
-			/* Wait on the other threads */
-			for(j=0; j</*NUMTHRDS*/nt; j++)
-			{
-				pthread_join(callThd[j], &status);
-			}
+			// printResult("threaded",n);
 
 			if (pthread_barrier_destroy(&barr)) {
 					printf("Could not destroy the barrier\n");
@@ -249,13 +241,18 @@ int main (int argc, char *argv[])
 		}
 		printf("\n");
 	}
-	printf("Exiting.\n");
 	pthread_exit(NULL);
 }
 
-void handlerc(int rc,char* string, int t){
-	if (rc) {
-	  printf("ERROR; return code from pthread_%s(%d) is %d\n",string,t,rc);
-	  exit(-1);
+void printResult(char* string, int n){
+	int i;
+	
+	for (i = 1; i <= n; i++){
+		printf("S[%d]=%d,%s",i,S[i],(S[i]>9)?" ":"  ");
 	}
+	printf("\n");
+	for (i = 1; i <= n; i++){
+		printf("D[%d]=%d,%s",i,D[i],(D[i]>9)?" ":"  ");
+	}
+	printf("\n\n");
 }
