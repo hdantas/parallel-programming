@@ -6,11 +6,14 @@ template: ass2-pthreads-template.c
 serial: ass2.c
 	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
 
+thread: ass2-pthreads.c
+	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
+
 runserial: serial
 	./$^.out
 
-compile: ass2-pthreads.c
-	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
+runthread: thread
+	./$^.out
 
 run: template
 	./$^.out

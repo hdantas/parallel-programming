@@ -110,7 +110,7 @@ int main (int argc, char *argv[]) {
 	join_threads(attr,threads,t);
 	t = 0;
 
-	for (i = 1,j=1; i <= sizeA/a; i++){
+	for (i = 1; i <= sizeA/a; i++){
 		printf("AAi[%d] = %d\tAA[%d] = %d\n",i,AAi[i-1],i,AA[i-1]);
 	}
 	for (j = 1; j <= sizeB/b; j++){	
