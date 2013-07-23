@@ -337,7 +337,6 @@ void seqmerge (int i, int j){
 	int k, x;
 	int beginC  = i + j;
 	int endC = beginC;
-	int counter  = i + j;
 	int tempC[NMAX] = {-1};
 	
 	// printf("\n(%d, %d)\n",i,j);
