@@ -17,7 +17,7 @@
 // int Ns[NSIZE] = {4096, 8192, 16384, 32768, 65536, 131072, 262144};
 #define NMAX 32
 #define NSIZE 1
-int Ns[NSIZE] = {16};
+int Ns[NSIZE] = {32};
 
 typedef struct __ThreadArg {
 	int min_i;
@@ -30,7 +30,7 @@ pthread_mutex_t mutexpm;
 pthread_barrier_t barr, internal_barr;
 
 // Seed Input
-int A[NMAX] = {58,89,32,73,131,156,30,29,141,37,133,151,88,53,122,126};//,131,49,130,115,16,83,40,145,10,112,20,147,14,104,111,92};
+int A[NMAX] = {58,89,32,73,131,156,30,29,141,37,133,151,88,53,122,126,131,49,130,115,16,83,40,145,10,112,20,147,14,104,111,92};
 //int A[NMAX] = {10,5,6,7,3,4,2,1};
 
 // Subset
