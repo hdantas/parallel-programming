@@ -217,7 +217,7 @@ int main (int argc, char *argv[])
 	// for each input size
 	for(c=0; c<NSIZE; c++){
 		n=Ns[c];
-		printf("| %03d | %08d |",n,TIMES);
+		printf("| %3d | %8d |",n,TIMES);
 
 		/* Run sequential algorithm */
 		result.tv_usec=0;
