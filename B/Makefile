@@ -1,24 +1,30 @@
-all: run
+all: pthreads-run
 
-template: ass2-pthreads-template.c
+openmp: ass2-openmp.c
+	gcc $^ -ggdb3 -fopenmp -lm -Wall -o $@.out
+
+pthreads: ass2-pthreads-template.c
 	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
 
 serial: ass2.c
 	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
 
-thread: ass2-pthreads.c
-	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
+# compile: ass3-pthreads.c
+# 	gcc $^ -ggdb3 -pthread -lm -Wall -o $@.out
 
-runserial: serial
+serial-run: serial
 	./$^.out
 
-runthread: thread
+pthreads-run: pthreads
 	./$^.out
 
-run: template
+openmp-run: openmp
 	./$^.out
 
-dbug: template
+pthreads-dbug: pthreads
+	gdb ./$^.out
+
+openmp-dbug: openmp
 	gdb ./$^.out
 
 clean:
