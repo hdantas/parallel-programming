@@ -1,0 +1,85 @@
+% HEADER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper,11pt]{article}
+
+%New commands and Renew commands
+\newcommand{\longtitle}[0]{Assignment B - Simple Merge} %For document title and cover
+\newcommand{\shorttitle}[0]{Assignment B - Simple Merge} %For bookmark name, no special characters
+\newcommand{\otoprule}{\midrule[\heavyrulewidth]} %bold rule with equal spacing up and down, ie bold midrule
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\newcommand{\ie}{\emph{i.e.}\xspace}
+\newcommand{\Ie}{\emph{I.e.}\xspace}
+\newcommand{\eg}{\emph{e.g.}\xspace}
+\newcommand{\Eg}{\emph{E.g.}\xspace}
+
+%Document language and encoding
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\selectlanguage{english}
+
+%Regular packages
+\input{packages}
+
+
+
+%Package Configurations sorted in ALPHABETICAL order
+
+\addtolength{\oddsidemargin}{-2.5cm} %change margins for odd numbered pages
+\addtolength{\evensidemargin}{-2.5cm} %change margins for even numbered pages
+\addtolength{\textwidth}{5cm} %change text width = margin de/increase in odd pages + margin de/increase in even pages
+\addtolength{\topmargin}{-2cm} %change margin on top
+\addtolength{\textheight}{4cm} %change text height (-2*\topmargin change)
+\definecolor{castanho}{HTML}{ddd9c3}
+\definecolor{preto}{rgb}{0,0,0}
+\definecolor{shadecolor}{HTML}{cdc9c9} %for frames with gray background
+\definecolor{rltblue}{rgb}{0,0,0.75}
+\definecolor{rltgreen}{rgb}{0,0.5,0}
+\definecolor{rltred}{rgb}{0.75,0,0}
+\definecolor{tijolo}{cmyk}{0,0.64,0.65,0.61}
+\epstopdfsetup{update,suffix=,verbose=false}
+\graphicspath{
+{figures/}
+}
+\hypersetup
+{
+        colorlinks=false,
+        linkcolor=black,       % \ref{...} and \pageref{...}
+        urlcolor=black,       % \href{...}{...} external (URL)
+        filecolor=black,     % \href{...} local file
+        pdftitle={\shorttitle},
+        pdfauthor={Henrique Dantas},
+        pdfsubject={},
+        pdfkeywords={},
+        pdfproducer={pdfLaTeX},
+        bookmarksopen=true,
+        pdfborder={0 0 0}
+}
+\numberwithin{equation}{section} %equation number include section
+\numberwithin{figure}{section} %figure number include section
+\numberwithin{table}{section} %table number include section
+\titleformat{\part}[hang]{\bfseries\Large}{\thepart.}{0.5cm}{}
+\titleformat{\section}[hang]{\normalfont\bfseries\color{NavyBlue}}{\thesection.}{0.2cm}{}
+\titleformat{\subsection}[hang]{\footnotesize\bfseries\color{ProcessBlue}}{\thesubsection.}{0.2cm}{}
+\titleformat{\subsubsection}[hang]{\footnotesize\color{Emerald}}{\thesubsubsection.}{0.1cm}{}
+\titlespacing*{\part}{0cm}{-1.5cm}{1cm}
+\titlespacing*{\section}{0cm}{0.5cm}{0.6cm}
+\titlespacing*{\subsection}{0cm}{0.5cm}{0.3cm}
+\titlespacing*{\subsubsection}{0cm}{0.25cm}{0.15cm}
+
+% END OF HEADER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% COVER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Define title
+\title{\vspace{-2cm}{\large{\textbf{\longtitle}}\\IN4026 Parallel Algorithms \& Parallel Computers\\Delft University of Technology}}
+\author{Henrique Dantas, 4172922, H.N.D.M.P.N.Dantas@student.tudelft.nl}
+\date{\today}
+
+% END OF COVER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\maketitle
+
+\input{file}
+
+\end{document}
