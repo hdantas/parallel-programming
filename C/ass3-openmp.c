@@ -101,7 +101,7 @@ void omp_function(int length, int nthreads){
 	for (j=0; j<=log2(length); j++) {	
 		// printf("Iteration %d\n",j+1);
 
-		#pragma omp parallel shared(S,D,newS,newD) private(i)
+		#pragma omp parallel num_threads(nt) shared(S,D,newS,newD) private(i)
 		{
 
 			#pragma omp for schedule(dynamic,chunk)

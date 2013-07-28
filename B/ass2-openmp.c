@@ -126,9 +126,9 @@ void omp_function(int length, int nthreads){
 
 	if (chunk == 0)
 		chunk = 1;
-	
+
 	// printf("chunk = %d, n_A = %d, n_B = %d, nthreads = %d\n",chunk,n_A,n_B,nthreads);
-	#pragma omp parallel shared(A,AA,B,BB,oldC) private(i,j)
+	#pragma omp parallel num_threads(nthreads) shared(A,AA,B,BB,oldC) private(i,j)
 	{
 		// Step 2
 		j = 1;
