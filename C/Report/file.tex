@@ -1,0 +1,119 @@
+\renewcommand{\O}{\mathcal{O}}
+
+% a brief report explaining the design and implementation of your algorithms, as well
+% as a set of comprehensive experimental results, clearly analyzed. The design and
+% implementation explanations should not exceed 2 pages.
+
+\section{Introduction}
+% 1. As an introduction, include the problem requirements and briefly explain your algorithm.
+
+The goal of the third and last assignment, assignment C, was to implement a pointer jumping algorithm. This should read input $S$ and write to an 
+array $R$ such that each value $R(i)$ is the distance from node $i$ to the end (last node) of
+$S$. The desired time complexity is $\O(\log_2(N))$, where $N$ is the length of $S$.
+
+The particular example that will be presented is a subset of the pointer jumping as each
+node only points to another, and no node has more that two pointers to it. It resembles a linked list.
+
+In addition a sequential implementation from which the remaining are inferred should also be given. 
+
+According to lecture 2 of this course, ``Pointer jumping is a technique suitable for fast access in pointer accessible data structures having the form of a forest of rooted-directed trees''. In our case the root of the forest is $S(i_\text{Root}) = 0$.
+
+In order to do parallel pointer jumping at each iteration the path (or the jump) doubles in size. In other words, update the successor of a node with that successor's successor until the root is found. It is important to note that the successor of the root is itself. No other node has this property.
+
+This algorithm will be further explained in section~\ref{sec:proof}.
+
+The sequential version of this algorithm is essentially the same as the parallel except it does not use threads, thus we will refrain from explaining it.
+
+\section{Algorithm Proof}
+\label{sec:proof}
+% 2. Give an algorithm proof: show why the algorithm will give the desired results.
+% For example, if the exercise is: calculate n!, and your algorithm is: fac(0)=1 and fac(n)=n · fac(n − 1) you should include a proof by induction.
+
+
+The parallelized algorithm should have a time complexity of $\O(\log_2(N))$. In order to obtain it\footnote{This algorithm is based on lecture number 2 from Parallel Parallel Algorithms and
+Parallel Computers} we will use the parallel strategy to solve the pointer jumping problem.
+
+The pseudocode for this algorithm is show in Algorithm~\ref{alg:merge}. 
+Prior to running this algorithm the array $D$ is set to 1 if the node $i$ is not the root, \emph{i.e.} if $S[i]~!= 0$. 
+% In addition the $D_{\text{new}}$ and $S_{\text{new}}$ arrays were created to hold the temporary values of $D$ and $S$, respectively. At the end of each iteration they are used to update those arrays.
+
+
+\begin{algorithm}[ht]
+\caption{Merge ordered arrays $A$ and $B$ to $C$}
+\label{alg:merge}
+\begin{algorithmic}[1]
+	\renewcommand{\algorithmicdo}{\textbf{pardo}}
+	\FOR{ $i \leftarrow 1$ \TO $N$}
+		\IF {S[i] != S[S[i]]}
+			\STATE $D[i] \leftarrow D[i] + D[S[i]]$;
+			\STATE $S[i] \leftarrow S[S[i]]$;
+		\ELSE
+			\STATE $D[i] \leftarrow D[i]$;
+			\STATE $S[i] \leftarrow S[i]$;
+		\ENDIF
+	\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+
+To verify the correctness of the algorithm each step will be explained and thereafter it will be proven by induction.
+
+The initial if checks if the successor of current index is equal to its successor's successor. If that is the case it means it is already pointing to the root and the values are not updated.
+Otherwise the $D$, which accounts for the distance to the root is updated with the old distance value plus the distance value of the successor.
+In addition, $S$ is set to the value of the  current node successor's successor.
+
+If we start at a leaf of the tree it is clear that at each step the node will point further away from its original parent. In particular, it always doubles the distance until it reaches the root. Also it updates the $D$ array every time it does so to keep track of how many hops it is from the root. Running this algorithm $\log_2(N)$ times for all nodes it is simple to understand that $D$ will be equal to the distance of the original node to the root.
+
+\section{Time-Complexity Analysis}
+% 3. Give an analysis of the time-complexity of your algorithm related to the size of the problem (usually N ).
+
+The time complexity analysis is very simple for this algorithm. Since at each iteration the node points two times as far as in the previous it will require $\log_2(N)$ iterations to reach the root for the node farthest away. Hence the complexity is $\O(\log_2(N))$.
+
+
+\section{Implementation}
+% 4. Implement first a sequential algorithm. Next, add not more than 3 OpenMP pragmas to parallelize the time consuming sections/loops of the code. Further,
+% implement the algorithm using PThreads. Explain the transition from pseudocode (or algorithm) to the implementation, focusing especially on work and data distribution.
+
+Both implementations are very simple and remarkably close to the pseudocode shown in Algorithm~\ref{alg:merge}. A small detail is that a couple of auxiliary arrays, $D_\text{new}$ and $S_\text{new}$ were added. These were responsible to update the $D$ and $S$ arrays, respectively, at the end of each iteration. The auxiliary arrays were necessary to ensure that each thread read the value for the current iteration and not for the next.
+
+In OpemMP two pgramas were used to schedule the three loops. The chunk size used is the ratio between the input size and the number of available threads. In addition a pragma to initialize the parallel section was also set, through which the number of threads was specified.
+
+Pthreads is very similar. As usual the threads are spawned and joined (at the end of the algorithm) by the main thread.
+Each thread synchronizes at the end of each iteration through the use of a barrier.
+
+\section{Results}
+\label{sec:results}
+% 5. Test your program varying both the problem size (at least 7 different problem
+% sizes) and the number of threads (at least 1, 2, 4, 8, and 16 threads - P ). Measure
+% the execution time, T , for each of the test cases (be sure to run the application
+% multiple times - i.e. 10, 100, or even 1000 times, and average the results).
+
+% Present your results in the following graphs: T (N, P fixed), T (P, N fixed), Speed-up(N, P
+% Fixed), Speed-up(P, N fixed). Analyze the results, focusing on the difference (if
+% any) between the measured and expected performance. See some more guidelines
+% and requirements in subsection 1.5.
+
+The program was tested with the example inputs from the lab manual and the results are summarized in table~\ref{tbl:results}. The machine used was the one provided by the course and was accessed remotely via ssh.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lcccccccc}
+         & NSize & Iterations & Seq      & Th01      & Th02      & Th04      & Th08      & Th16
+\\\midrule
+Pthreads	& 16 &      1000 & 0.002624 &  0.042643 &  0.120167 &  0.223224 &  1.061668 &  3.544720\\
+OpenMP		& 16 &      1000 & 0.003079 &  0.013094 &  0.043969 &  0.298335 &  0.508953 &  0.631292
+\end{tabular}
+\caption{Timing results for the Parallel Implementations}
+\label{tbl:results}
+\end{table}
+
+From table~\ref{tbl:results} it is perceptible that given the current input, the threaded implementations offer no advantage over the sequential one. Each thread should be assigned more work in order to compensate for the communication overhead. Added to this the Pthreads implementation is significantly slower than OpenMP. A possible, and most obvious, explanation is that PThreads is not implemented in the most efficient manner. Regardless, OpenMP is still much slower than the sequential versions.
+
+\section{Conclusions}
+% 6. Include a Conclusions section to briefly explain what have you done and, more
+% important, what have you learned from the given exercise and its parallelization.
+% Comment on efficiency and usability of the given implementation language/library
+% for the given application and, if possible, generalize.
+
+In this assignment we were asked to implement a parallel solution for the pointer jumping problem. To fulfill that task an algorithm present at the second lecture of this Course lectures was chosen. In addition this algorithm has a time complexity equal to  $\O(\log_2(N))$.
+From section~\ref{sec:results} one can conclude that for the input size used the communication overhead is much greater than the gains from parallel execution.

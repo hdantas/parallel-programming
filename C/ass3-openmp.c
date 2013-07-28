@@ -22,7 +22,7 @@ int Ns[NSIZE] = {16};
 
 // Seed Input
 // int A[NMAX];
-int A[] = {0,0,1,2,1,3,3,4,5,5,6,7,8,9,9,10,11};
+int A[] = {0,14,13,5,16,11,10,9,12,0,8,7,15,4,3,2,1};
 
 // Subset
 int B[NMAX];
@@ -101,7 +101,7 @@ void omp_function(int length, int nthreads){
 	for (j=0; j<=log2(length); j++) {	
 		// printf("Iteration %d\n",j+1);
 
-		#pragma omp parallel num_threads(nt) shared(S,D,newS,newD) private(i)
+		#pragma omp parallel num_threads(nthreads) shared(S,D,newS,newD) private(i)
 		{
 
 			#pragma omp for schedule(dynamic,chunk)
