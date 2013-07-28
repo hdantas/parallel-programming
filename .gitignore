@@ -1,2 +1,9 @@
 *out*
 *~
+*.out
+*.log
+*.aux
+*~
+*.toc
+*.lof
+*.lot
